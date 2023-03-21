@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./lib/index.js"></script>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+    canvas {
+      margin: 50px auto 0px;
+      display: block;
+      background: yellow;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="400" height="400"></canvas>
+</body>
+<script>
+  const ctx = document.getElementById('canvas')
+  const gl = ctx.getContext('webgl')
+
+  // 創建著色器源碼
+  const VERTEX_SHADER_SOURCE = `
+    //  只傳遞頂點數據
+    attribute vec4 aPosition;
+    void main() {
+      gl_Position = aPosition; // vec4(0.0, 0.0, 0.0, 1.0)
+      gl_PointSize = 15.0;
+    }
+  `//  頂點著色器
+  const  FRAGMENT_SHADER_SOURCE = `
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+  `//  片元著色器
+
+  const program = initShader(gl, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE)
+  const aPosition = gl.getAttribLocation(program, 'aPosition')
+  // 蛇身長度
+  let points = [
+    {x:0, y: 0}
+  ]
+  // 食物的座標
+  const random = {
+    isConnect: true
+  }
+  // 移動的速度
+  let originSpeed = 0.02
+  // 行動的速度
+  let speed = originSpeed
+  // 移動的方向
+  let direction = 'x'
+  // 允許吃掉食物的誤差範圍
+  let base = 1.5
+  /**
+   * 初始化數據
+   */
+  const initGameData = () => {
+    points = [
+      {x:0, y: 0}
+    ]
+    direction = 'x'
+    speed = originSpeed
+  }
+  /**
+   * 鍵盤操作
+   */
+  document.onkeydown = (event) => {
+    switch (event.keyCode) {
+      case 37:
+        direction = 'x'
+        speed = -originSpeed
+        break;
+      case 38:
+        direction = 'y'
+        speed = originSpeed
+       break;
+      case 39:
+        direction = 'x'
+        speed = originSpeed
+       break;
+      case 40:
+        direction = 'y'
+        speed = -originSpeed
+       break;
+    }
+  }
+  /**
+   * 隨機創造食物
+   */
+  const createRandom = () => {
+    if (random.isConnect) {
+      // -1 ~ 1
+      random.x = Math.random() * 2 - 1
+      random.y = Math.random() * 2 - 1
+
+      random.isConnect = false
+    }
+  }
+  /**
+   * 繪製畫布 
+   */
+  const drawFood = () => {
+      gl.vertexAttrib3f(aPosition, random.x, random.y, 0.0)
+      gl.drawArrays(gl.POINTS, 0, 1)
+  }
+  const drawSnack = () => {
+    let preX, preY = 0
+    for(let i = 0;i<points.length;i++){
+      if (i === 0) {
+        preX = points[i].x
+        preY = points[i].y
+        // 蛇身的移動
+        points[0][direction] += speed
+      } else {
+        let {x, y} = points[i]
+        points[i].x = preX
+        points[i].y = preY
+
+        preX = x
+        preY = y
+      }
+      gl.vertexAttrib3f(aPosition, points[i].x, points[i].y, 0.0)
+      gl.drawArrays(gl.POINTS, 0, 1)
+    }
+  }
+  const draw = () => {
+    createRandom()
+    drawFood()
+    drawSnack()
+  }
+  /**
+   * 是否觸碰邊界判斷
+   */
+  const isOutBoundary = () => {
+    return (
+        points[0].x > 1.0 ||
+        points[0].x < -1.0 ||
+        points[0].y < -1.0 ||
+        points[0].y > 1.0
+      ) 
+  }
+  /**
+   * 邊界判斷
+   */
+  const boundaryAlert = () => {
+    if (isOutBoundary()) {
+      alert('Game Over')
+      reStart()
+    }
+  }
+  /**
+   * 是否吃到食物邊界判斷
+   */
+  const isEatFood = () => {
+    return (
+        points[0].x > random.x - base * originSpeed &&
+        points[0].x < random.x + base * originSpeed &&
+        points[0].y < random.y + base * originSpeed &&
+        points[0].y > random.y - base * originSpeed
+      ) 
+  }
+  /**
+   * 是否吃到食物
+   */
+   const eatFood = () => {
+    if (isEatFood()) {
+      points.push({
+        x: random.x,
+        y: random.y
+      })
+      random.isConnect = true
+    }
+   }
+  /**
+   * 啟動計時器
+   */
+  let timer = null
+  const start = () => {
+    timer = setInterval(() => {
+      // 是否出界
+      boundaryAlert()
+      // 是否吃到食物
+      eatFood()
+      // 繪圖
+      draw()
+    }, 100)
+  }
+  /**
+   * 重新啟動
+   */
+  const reStart = () => {
+    clearInterval(timer)
+    initGameData()
+    start()
+  }
+  start()
+</script>
+</html>
