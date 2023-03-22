@@ -74,22 +74,27 @@
   >> 环境光会均匀的照亮场景中的所有物体。环境光不能用来投射阴影，因为它没有方向。
   AmbientLight( color : Integer, intensity : Float )
   */
-  const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
-  spotLight.position.set(-10,10,90)
-  scene.add(spotLight) // spotLight | ambientLight
-  spotLight.shadowMapWidth = 4096 // Shadow Quality
-  spotLight.shadowMapHeight = 4096 // Shadow Quality
+  // const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
+  // spotLight.position.set(-10,10,90)
+  // scene.add(spotLight) // spotLight | ambientLight
+  // spotLight.castShadow = true // 設置燈光開啟陰影
+  // spotLight.shadowMapWidth = 4096 // Shadow Quality
+  // spotLight.shadowMapHeight = 4096 // Shadow Quality
   // const spotLightHelper = new THREE.SpotLightHelper(spotLight)
   // scene.add(spotLightHelper)
-  // 
+  // 環境光
   const ambientLight = new THREE.AmbientLight(0x000000)
   scene.add(ambientLight)
+  // 點光源 >。 無陰影
+  const pointLight = new THREE.PointLight(0xffffff) // 聚光燈光源
+  pointLight.position.set(-10,10,90)
+  scene.add(pointLight)
 
   cube.castShadow = true // 讓三維物體產生陰影，需要平面接收陰影
   sphere.castShadow = true // 讓三維物體產生陰影，需要平面接收陰影
   plane.receiveShadow = true // 使用平面接收陰影
-  spotLight.castShadow = true // 設置燈光開啟陰影
-
+  
+  
   //
   renderer.shadowMapEnabled = true
 
@@ -99,7 +104,7 @@
   颜色参数传入Color构造函数中，来设置颜色属性。颜色可以是一个十六进制的整型数，或者是CSS风格的字符串。
   */
   // scene.fog = new THREE.Fog(0xcccccc, 1, 50)
-  initControls(spotLight)
+  initControls(pointLight)
   const animation = () => {
     cube.rotation.x += 0.01
     cube.rotation.y += 0.01
