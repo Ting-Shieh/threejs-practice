@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>光源類型</title>
+  <title>材質類型</title>
   <style>
     *{
       margin: 0;
@@ -39,33 +39,10 @@
   const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
   // MeshBasicMaterial
   // MeshLambertMaterial => 要加燈光
-  const cubeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000, wireframe: false})
+  const cubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: false})
   const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
   scene.add(cube)
-  /*
-  SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer, phiStart : Float, phiLength : Float, thetaStart : Float, thetaLength : Float)
-  radius — 球体半径，默认为1。
-  widthSegments — 水平分段数（沿着经线分段），最小值为3，默认值为32。
-  heightSegments — 垂直分段数（沿着纬线分段），最小值为2，默认值为16。
-  phiStart — 指定水平（经线）起始角度，默认值为0。。
-  phiLength — 指定水平（经线）扫描角度的大小，默认值为 Math.PI * 2。
-  thetaStart — 指定垂直（纬线）起始角度，默认值为0。
-  thetaLength — 指定垂直（纬线）扫描角度大小，默认值为 Math.PI。
-  */
-  const sphereGeometry = new THREE.SphereGeometry(1,10,10)
-  const sphereMaterial = new THREE.MeshLambertMaterial({color: 0x00ff00, wireframe: false})
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
-  sphere.position.set(3, 1, 0)
-  scene.add(sphere)
-
-  /* 添加一個平面，用來接收陰影 */
-  const planeGeometry = new THREE.PlaneGeometry(20, 30)
-  const planeMaterial = new THREE.MeshBasicMaterial({color: 0x999999})
-  const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-  plane.rotateZ(20)
-  plane.position.set(3, 0, -10)
-  scene.add(plane)
-
+  
   /* 
   [ 聚光燈光源：SpotLight ]
   >> 光线从一个点沿一个方向射出，随着光线照射的变远，光线圆锥体的尺寸也逐渐增大。
@@ -80,45 +57,17 @@
   >> 光源直接放置于场景之上，光照颜色从天空光线颜色渐变到地面光线颜色。半球光不能投射阴影。
   HemisphereLight( skyColor : Integer, groundColor : Integer, intensity : Float )
   */
-  // const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
-  // spotLight.position.set(-10,10,90)
-  // scene.add(spotLight) // spotLight | ambientLight
-  // spotLight.castShadow = true // 設置燈光開啟陰影
-  // spotLight.shadowMapWidth = 4096 // Shadow Quality
-  // spotLight.shadowMapHeight = 4096 // Shadow Quality
-  // const spotLightHelper = new THREE.SpotLightHelper(spotLight)
-  // scene.add(spotLightHelper)
-  // 環境光
-  const ambientLight = new THREE.AmbientLight(0x000000)
-  scene.add(ambientLight)
-  // 點光源 >。 無陰影
-  // const pointLight = new THREE.PointLight(0xffffff) // 聚光燈光源
-  // pointLight.position.set(-10,10,90)
-  // scene.add(pointLight)
-  // 平行光
-  // const directionalLight = new THREE.DirectionalLight(0xffffff) // 聚光燈光源
-  // directionalLight.position.set(-10,10,90)
-  // scene.add(directionalLight)
-  // directionalLight.castShadow = true // 設置燈光開啟陰影
-  // directionalLight.shadowCameraLeft = -50
-  // directionalLight.shadowCameraRight = 50
-  // directionalLight.shadowCameraTop = 50
-  // directionalLight.shadowCameraBottom = -50
-  // directionalLight.shadowCameraNear = 2
-  // directionalLight.shadowCameraFar = 200
-  // directionalLight.shadowMapWidth = 4096 
-  // directionalLight.shadowMapHeight = 4096 
-
-  // 半球
-  const hemisphereLight = new THREE.HemisphereLight(0xff00ff, 0x00ff00, 1) // 聚光燈光源
-  hemisphereLight.position.set(-10, 10, 30)
-  scene.add(hemisphereLight)
+  const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
+  spotLight.position.set(-10,10,90)
+  scene.add(spotLight) // spotLight | ambientLight
+  spotLight.castShadow = true // 設置燈光開啟陰影
+  spotLight.shadowMapWidth = 4096 // Shadow Quality
+  spotLight.shadowMapHeight = 4096 // Shadow Quality
+  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+  scene.add(spotLightHelper)
 
   cube.castShadow = true // 讓三維物體產生陰影，需要平面接收陰影
-  sphere.castShadow = true // 讓三維物體產生陰影，需要平面接收陰影
-  plane.receiveShadow = true // 使用平面接收陰影
-  
-  
+
   //
   renderer.shadowMapEnabled = true
 
@@ -128,12 +77,10 @@
   颜色参数传入Color构造函数中，来设置颜色属性。颜色可以是一个十六进制的整型数，或者是CSS风格的字符串。
   */
   // scene.fog = new THREE.Fog(0xcccccc, 1, 50)
-  initControls(hemisphereLight)
+  initControls(cubeMaterial)
   const animation = () => {
     cube.rotation.x += 0.01
     cube.rotation.y += 0.01
-    // 半球光
-    hemisphereLight.position.z -= 0.1
     // 渲染
     renderer.render(scene, camera)
     requestAnimationFrame(animation)
