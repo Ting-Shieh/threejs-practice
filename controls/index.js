@@ -81,7 +81,50 @@ const basicType = {
           break;
       }
     }
-  
+  },
+  // 材料的環境顏色
+  ambient: {
+    method: 'addColor',
+    getValue: item => item.ambient.getHex(),
+    setValue: (item, value) => item.ambient = new THREE.Color(value),
+  },
+  // 材料本身發出的顏色
+  emissive: {
+    method: 'addColor',
+    getValue: item => item.emissive.getStyle(),
+    setValue: (item, value) => item.emissive.setStyle(value),
+  },
+  // 高亮部分的顏色
+  specular: {
+    method: 'addColor',
+    getValue: item => item.specular.getHex(),
+    setValue: (item, value) => item.specular  = new THREE.Color(value),
+  },
+  // 高亮部分的亮度
+  shininess: {
+    extends: [0, 100],
+    getValue: item => item.shininess,
+    setValue: (item, value) => item.shininess = value,
+  },
+  alpha: {
+    extends: [0, 1],
+    getValue: item => item.uniforms.a.value,
+    setValue: (item, value) => item.uniforms.a.value = value,
+  },
+  red: {
+    extends: [0, 1],
+    getValue: item => item.uniforms.r.value,
+    setValue: (item, value) => item.uniforms.r.value = value,
+  },
+  dashSize: {
+    extends: [0, 5],
+    getValue: item => item.dashSize,
+    setValue: (item, value) => item.dashSize = +value,
+  },
+  gapSize: {
+    extends: [0, 5],
+    getValue: item => item.gapSize,
+    setValue: (item, value) => item.gapSize = +value,
   }
 }
 const itemType = {
@@ -93,7 +136,11 @@ const itemType = {
   HemisphereLight: [ 'color', 'groundColor', 'intensity'],
   MeshBasicMaterial: ['color', 'opacity', 'transparent', 'wireframe', 'visible'],
   MeshDepthMaterial: ['opacity', 'wireframe', 'cameraNear', 'cameraFar'],
-  MeshNormalMaterial: ['opacity', 'transparent', 'wireframe', 'visible', 'side']
+  MeshNormalMaterial: ['opacity', 'transparent', 'wireframe', 'visible', 'side'],
+  MeshLambertMaterial: ['color', 'opacity', 'transparent', 'wireframe', 'visible', 'side', 'ambient', 'emissive'],
+  MeshPhongMaterial: ['color', 'opacity', 'transparent', 'wireframe', 'visible', 'side', 'ambient', 'emissive', 'specular', 'shininess'],
+  ShaderMaterial: ['alpha', 'red'],
+  LineDashedMaterial: ['color', 'dashSize', 'gapSize'],
 }
 function initControls(item, camera) {
   console.log(item)
