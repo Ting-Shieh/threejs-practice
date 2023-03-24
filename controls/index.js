@@ -64,6 +64,24 @@ const basicType = {
     extends: [50, 1000],
     getValue: (item, camera) => camera.far,
     setValue: (item, value, camera) => camera.far = value,
+  },
+  side: {
+    extends: [['front', 'back', 'double']],
+    getValue: () => 'front',
+    setValue: (item, value) => {
+      switch (value) {
+        case 'front':
+          item.side = THREE.FrontSide
+          break;
+        case 'back':
+          item.side = THREE.BackSide
+          break;
+        case 'double':
+          item.side = THREE.DoubleSide
+          break;
+      }
+    }
+  
   }
 }
 const itemType = {
@@ -74,7 +92,8 @@ const itemType = {
   DirectionalLight: ['color', 'intensity'],
   HemisphereLight: [ 'color', 'groundColor', 'intensity'],
   MeshBasicMaterial: ['color', 'opacity', 'transparent', 'wireframe', 'visible'],
-  MeshDepthMaterial: ['opacity', 'wireframe', 'cameraNear', 'cameraFar']
+  MeshDepthMaterial: ['opacity', 'wireframe', 'cameraNear', 'cameraFar'],
+  MeshNormalMaterial: ['opacity', 'transparent', 'wireframe', 'visible', 'side']
 }
 function initControls(item, camera) {
   console.log(item)

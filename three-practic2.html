@@ -40,7 +40,8 @@
   // MeshBasicMaterial
   // MeshLambertMaterial => 要加燈光
   // const cubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: false})
-  const cubeMaterial = new THREE.MeshDepthMaterial({color: 0xff0000, wireframe: false})
+  // const cubeMaterial = new THREE.MeshDepthMaterial({color: 0xff0000, wireframe: false})
+  const cubeMaterial = new THREE.MeshNormalMaterial({color: 0xff0000, wireframe: false})
   const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
   scene.add(cube)
   
