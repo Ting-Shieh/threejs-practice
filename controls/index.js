@@ -141,6 +141,9 @@ const basicType = {
   segments: getMeshValue([3, 80], 'segments'),
   thetaStart: getMeshValue([0, Math.PI * 2], 'thetaStart'),
   thetaLength: getMeshValue([0, Math.PI * 2], 'thetaLength'),
+  phiStart: getMeshValue([0, Math.PI * 2], 'phiStart'),
+  phiLength: getMeshValue([0, Math.PI * 2], 'phiLength'),
+
 }
 const itemType = {
   SpotLight: ['color', 'intensity', 'distance', 'angle', 'exponent'],
@@ -159,6 +162,7 @@ const itemType = {
   CircleGeometry : ['radius', 'segments', 'thetaStart', 'thetaLength'],
   ShapeGeometry: [],
   BoxGeometry: ['width', 'height', 'depth', 'widthSegments', 'heightSegments', 'depthSegments'],
+  SphereGeometry: ['radius', 'widthSegments', 'heightSegments', 'phiStart', 'phiLength', 'thetaStart', 'thetaLength'],
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
