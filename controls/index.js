@@ -125,7 +125,16 @@ const basicType = {
     extends: [0, 5],
     getValue: item => item.gapSize,
     setValue: (item, value) => item.gapSize = +value,
-  }
+  },
+  // width: {
+  //   extends: [0, 20],
+  //   getValue: (item, camera, mesh) => mesh.children[0].geometry.parameters.width ,
+  //   setValue: (item, value) => mesh.children[0].geometry.parameters.width = +value,
+  // },
+  width: getMeshValue([0, 20], 'width'),
+  height: getMeshValue([0, 20], 'height'),
+  widthSegments: getMeshValue([0, 20], 'widthSegments'),
+  heightSegments: getMeshValue([0, 20], 'heightSegments'),
 }
 const itemType = {
   extends: [0, 20],
@@ -141,10 +150,56 @@ const itemType = {
   MeshPhongMaterial: ['color', 'opacity', 'transparent', 'wireframe', 'visible', 'side', 'ambient', 'emissive', 'specular', 'shininess'],
   ShaderMaterial: ['alpha', 'red'],
   LineDashedMaterial: ['color', 'dashSize', 'gapSize'],
+  PlaneBufferGeometry: ['width', 'height', 'heightSegments', 'widthSegments'],
 }
-function initControls(item, camera) {
+function createMaterial (geometry) {
+  const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
+  const basic = new THREE.MeshBasicMaterial({wireframe: true})
+  
+  return THREE.SceneUtils.createMultiMaterialObject(geometry, [
+    lambert,basic
+  ])
+}
+// 轉換為數字
+const roundValue = {
+  width: 1,
+  height: 1,
+  widthSegments: 1,
+  heightSegments: 1
+}
+function removeAndCreate (item, val, camera, mesh, scene, controls) {
+  console.log('removeAndCreate controls', controls)
+  // 原始旋轉角度
+  const { x,y,z } = mesh.pointer.rotation
+  // 場景移除
+  scene.remove(mesh.pointer)
+  // 
+  const arg = []
+  for (const key in controls) {
+    if (roundValue[key]) {
+      controls[key] = ~~controls[key]
+    }
+    arg.push(controls[key])
+  }
+  // 
+  mesh.pointer = createMaterial(new THREE[item.type](...arg))
+  console.log('mesh.pointer',mesh.pointer)
+  // 繼承原始旋轉角度
+  mesh.pointer.rotation.set(x,y,z)
+  //
+  scene.add(mesh.pointer)
+}
+function getMeshValue (extend, name) {
+  return {
+    extends: extend,
+    getValue: (item, camera, mesh) => mesh.children[0].geometry.parameters[name],
+    setValue: (...arg) => removeAndCreate(...arg),
+  }
+}
+function initControls(item, camera, mesh, scene) {
   console.log(item)
   console.log(camera)
+  console.log(mesh)
   // 創建ＧＵＩ實例
   const gui = new dat.GUI()
   // 獲取物件可配置項目清單
@@ -157,12 +212,12 @@ function initControls(item, camera) {
     const child = basicType[typeList[i]]
 
     if (child) { 
-      controls[typeList[i]] = child.getValue(item, camera)
+      controls[typeList[i]] = child.getValue(item, camera, mesh.pointer)
       // 是否有 extends
       const childExtends = child.extends || []
 
       gui[child.method || 'add'](controls, typeList[i], ...childExtends).onChange((val) => {
-        child.setValue(item, val, camera)
+        child.setValue(item, val, camera, mesh, scene, controls)
       })
      }
   }

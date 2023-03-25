@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幾何體類型</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="./lib/three/three.js"></script>
+  <script src="./lib/three/dat.gui.js"></script>
+  <script src="./controls/index.js"></script>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000)
+  camera.position.set(0,0, 20)
+  const renderer = new THREE.WebGLRenderer()
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  document.body.appendChild(renderer.domElement)
+  // ===== 內容 ======
+  /*
+  BoxGeometry(width : Float, height : Float, depth : Float, widthSegments : Integer, heightSegments : Integer, depthSegments : Integer)
+  width — X轴上面的宽度，默认值为1。
+  height — Y轴上面的高度，默认值为1。
+  depth — Z轴上面的深度，默认值为1。
+  widthSegments — （可选）宽度的分段数，默认值是1。
+  heightSegments — （可选）高度的分段数，默认值是1。
+  depthSegments — （可选）深度的分段数，默认值是1。
+  */
+  const geometry = new THREE.PlaneBufferGeometry(10, 10, 2, 2)
+
+  // 聯合材質
+  const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
+  const basic = new THREE.MeshBasicMaterial({wireframe: true})
+  const mesh = {
+    pointer: THREE.SceneUtils.createMultiMaterialObject(geometry, [
+      lambert,basic
+    ])
+  }
+  
+  
+  scene.add(mesh.pointer)
+  
+  // 燈光
+  const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
+  spotLight.position.set(-10,10,90)
+  scene.add(spotLight) // spotLight | ambientLight
+  
+  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+  scene.add(spotLightHelper)
+
+  initControls(geometry, camera, mesh, scene)
+  const animation = () => {
+    mesh.pointer.rotation.x += 0.01
+    mesh.pointer.rotation.y += 0.01
+    // 渲染
+    renderer.render(scene, camera)
+    requestAnimationFrame(animation)
+  }
+  animation()
+</script>
