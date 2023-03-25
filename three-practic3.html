@@ -31,8 +31,15 @@
   CircleGeometry(radius : Float, segments : Integer, thetaStart : Float, thetaLength : Float)
   */
   // const geometry = new THREE.PlaneBufferGeometry(10, 10, 2, 2)
-  const geometry = new THREE.CircleGeometry(4, 10, 0, Math.PI * 2)
-
+  // const geometry = new THREE.CircleGeometry(4, 10, 0, Math.PI * 2)
+  // 定义了一个立方体的对象
+  const shape = new THREE.Shape()
+  shape.moveTo(0, 0)
+  shape.lineTo(0, 3)
+  shape.lineTo(3, 3)
+  shape.lineTo(3, 0)
+  shape.lineTo(0, 0)
+  const geometry = new THREE.ShapeGeometry(shape)
   // 聯合材質
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
   const basic = new THREE.MeshBasicMaterial({wireframe: true})

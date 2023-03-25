@@ -155,6 +155,7 @@ const itemType = {
   LineDashedMaterial: ['color', 'dashSize', 'gapSize'],
   PlaneBufferGeometry: ['width', 'height', 'heightSegments', 'widthSegments'],
   CircleGeometry : ['radius', 'segments', 'thetaStart', 'thetaLength'],
+  ShapeGeometry: [],
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
