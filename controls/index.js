@@ -147,9 +147,12 @@ const basicType = {
   radiusBottom: getMeshValue([-20, 20], 'radiusBottom'),
   radialSegments: getMeshValue([1, 60], 'radialSegments'),
   openEnded: getMeshValue([], 'openEnded'),
-  tube: getMeshValue([1, 6], 'tube'),
+  tube: getMeshValue([1, 6], 'tube'),  // 管道半徑
   tubularSegments: getMeshValue([1, 20], 'tubularSegments'),
   arc: getMeshValue([0, Math.PI * 2], 'arc'),
+  p: getMeshValue([1, 10], 'p'),
+  q: getMeshValue([1, 10], 'q'),
+  heightScale: getMeshValue([0, 5], 'heightScale'),
 }
 const itemType = {
   SpotLight: ['color', 'intensity', 'distance', 'angle', 'exponent'],
@@ -171,6 +174,7 @@ const itemType = {
   SphereGeometry: ['radius', 'widthSegments', 'heightSegments', 'phiStart', 'phiLength', 'thetaStart', 'thetaLength'],
   CylinderGeometry: ['radiusTop','radiusBottom', 'height', 'radialSegments', 'heightSegments', 'openEnded'],
   TorusGeometry: ['radius','tube', 'radialSegments', 'tubularSegments', 'arc'],
+  TorusKnotGeometry : ['radius','tube', 'tubularSegments', 'radialSegments', 'p', 'q', 'heightScale'],
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
