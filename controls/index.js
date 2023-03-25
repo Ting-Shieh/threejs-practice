@@ -153,7 +153,16 @@ const basicType = {
   p: getMeshValue([1, 10], 'p'),
   q: getMeshValue([1, 10], 'q'),
   heightScale: getMeshValue([0, 5], 'heightScale'),
+  detail: getMeshValue([0, 5], 'detail'),
 }
+// 多面體參數
+const vertices = [
+  1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1,
+] // 頂點
+const indices = [
+  2, 1, 0,  0,  3, 2,  1, 3,  0, 2,  3,  1,
+] // 索引
+
 const itemType = {
   SpotLight: ['color', 'intensity', 'distance', 'angle', 'exponent'],
   AmbientLight: ['color'],
@@ -175,6 +184,10 @@ const itemType = {
   CylinderGeometry: ['radiusTop','radiusBottom', 'height', 'radialSegments', 'heightSegments', 'openEnded'],
   TorusGeometry: ['radius','tube', 'radialSegments', 'tubularSegments', 'arc'],
   TorusKnotGeometry : ['radius','tube', 'tubularSegments', 'radialSegments', 'p', 'q', 'heightScale'],
+  PolyhedronGeometry: ['radius', 'detail'], // 自定義多面體
+  TetrahedronGeometry: ['radius', 'detail'], // 正四面體
+  OctahedronGeometry: ['radius', 'detail'], // 正八面體
+  IcosahedronGeometry: ['radius', 'detail'], // 正二十面體
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
@@ -194,7 +207,9 @@ const roundValue = {
   depthSegments: 1,
   radialSegments: 1,
   tubularSegments: 1,
+  detail: 1,
 }
+const isPolyhedron = item => item.type === 'PolyhedronGeometry'
 function removeAndCreate (item, val, camera, mesh, scene, controls) {
   console.log('removeAndCreate controls', controls)
   // 原始旋轉角度
@@ -208,6 +223,9 @@ function removeAndCreate (item, val, camera, mesh, scene, controls) {
       controls[key] = ~~controls[key]
     }
     arg.push(controls[key])
+  }
+  if (isPolyhedron(item)) {
+    arg.unshift(vertices, indices);
   }
   // 
   mesh.pointer = createMaterial(new THREE[item.type](...arg))
