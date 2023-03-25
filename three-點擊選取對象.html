@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>點擊選取對象</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="./lib/three/three.js"></script>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000)
+  camera.position.set(0,0, 20)
+  const renderer = new THREE.WebGLRenderer()
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  document.body.appendChild(renderer.domElement)
+  // ===== 內容 ======
+  const cubeGeometry = new THREE.BoxGeometry(2, 2, 2)
+  const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
+  const basic = new THREE.MeshBasicMaterial({wireframe: true})
+  
+  const cube = new THREE.Mesh(cubeGeometry, lambert)
+  cube.rotation.set(0.4, 0.4, 0)
+  cube.position.x = -4
+  cube.name = 'cube'
+  scene.add(cube)
+
+  const sphereGeometry = new THREE.SphereGeometry(2, 10, 10)
+  const sphere = new THREE.Mesh(sphereGeometry, lambert)
+  sphere.position.x = 4;
+  sphere.name = 'sphere'
+  scene.add(sphere);
+  
+  // 燈光
+  const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
+  spotLight.position.set(-10,10,90)
+  scene.add(spotLight)
+  
+  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+  scene.add(spotLightHelper)
+  
+  // 點擊選取對象
+  document.onclick = function (event) {
+    // 獲取設備(瀏覽器)座標
+    const x = (event.clientX / window.innerWidth) * 2 - 1
+    const y = -(event.clientY / window.innerHeight) * 2 + 1
+    // 創建設備三維座標
+    const standardVector = new THREE.Vector3(x, y, 0.5)
+    // 轉為世界座標
+    const worldVector = standardVector.unproject(camera)
+    // 序列化(将元素坐标转换为 webgl 坐标系里的坐标，将数据转换到 [-1,1] 这个区间)
+    const ray = worldVector.sub(camera.position).normalize()
+    // 實現點擊選中 射線法
+    // 創建一個射線發射器發送一條射線
+    const rayCaster = new THREE.Raycaster(camera.position, ray)
+    // 返回射線碰撞到的物體
+    const intersects = rayCaster.intersectObjects(scene.children, true)
+    console.log(intersects)
+    let point3d = null
+    if (intersects.length) {
+      point3d = intersects[0]
+    }
+    if (point3d) {
+      console.log(point3d)
+    }
+  }
+  
+  const animation = () => {
+    // 渲染
+    renderer.render(scene, camera)
+    requestAnimationFrame(animation)
+  }
+  animation()
+</script>
