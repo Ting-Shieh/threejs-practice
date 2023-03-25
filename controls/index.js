@@ -154,6 +154,13 @@ const basicType = {
   q: getMeshValue([1, 10], 'q'),
   heightScale: getMeshValue([0, 5], 'heightScale'),
   detail: getMeshValue([0, 5], 'detail'),
+  size: getMeshValue([1, 10], 'size'),
+  bevelThickness: getMeshValue([1, 30], 'bevelThickness'),
+  bevelSize: getMeshValue([1, 30], 'bevelSize'),
+  bevelEnabled: getMeshValue([], 'bevelEnabled'),
+  bevelSegments: getMeshValue([1, 30], 'bevelSegments'),
+  curveSegments: getMeshValue([1, 30], 'curveSegments'),
+  steps: getMeshValue([1, 10], 'steps'),
 }
 // 多面體參數
 const vertices = [
@@ -162,7 +169,35 @@ const vertices = [
 const indices = [
   2, 1, 0,  0,  3, 2,  1, 3,  0, 2,  3,  1,
 ] // 索引
-
+// 文字參數
+const textOptions = {
+  size: 1,
+  height: 1,
+  weight: 'normal',
+  font: 'helvetiker',
+  bevelThickness: 1,
+  bevelSize: 1,
+  bevelEnabled: false,
+  bevelSegments: 1,
+  curveSegments: 1,
+  steps: 1,
+}
+// 轉換為數字
+const roundValue = {
+  width: 1,
+  height: 1,
+  depth: 1,
+  widthSegments: 1,
+  heightSegments: 1,
+  depthSegments: 1,
+  radialSegments: 1,
+  tubularSegments: 1,
+  detail: 1,
+  size: 1,
+  bevelSegments: 1,
+  curveSegments: 1,
+  steps: 1,
+}
 const itemType = {
   SpotLight: ['color', 'intensity', 'distance', 'angle', 'exponent'],
   AmbientLight: ['color'],
@@ -181,13 +216,16 @@ const itemType = {
   ShapeGeometry: [],
   BoxGeometry: ['width', 'height', 'depth', 'widthSegments', 'heightSegments', 'depthSegments'],
   SphereGeometry: ['radius', 'widthSegments', 'heightSegments', 'phiStart', 'phiLength', 'thetaStart', 'thetaLength'],
-  CylinderGeometry: ['radiusTop','radiusBottom', 'height', 'radialSegments', 'heightSegments', 'openEnded'],
-  TorusGeometry: ['radius','tube', 'radialSegments', 'tubularSegments', 'arc'],
-  TorusKnotGeometry : ['radius','tube', 'tubularSegments', 'radialSegments', 'p', 'q', 'heightScale'],
+  CylinderGeometry: ['radiusTop','radiusBottom', 'height', 'radialSegments', 'heightSegments', 'openEnded'], // 圓錐
+  TorusGeometry: ['radius','tube', 'radialSegments', 'tubularSegments', 'arc'], // 環狀
+  TorusKnotGeometry : ['radius','tube', 'tubularSegments', 'radialSegments', 'p', 'q', 'heightScale'], // 紐結
   PolyhedronGeometry: ['radius', 'detail'], // 自定義多面體
   TetrahedronGeometry: ['radius', 'detail'], // 正四面體
   OctahedronGeometry: ['radius', 'detail'], // 正八面體
   IcosahedronGeometry: ['radius', 'detail'], // 正二十面體
+  TextGeometry: [
+    'size', 'bevelThickness','bevelSize', 'bevelEnabled', 'bevelSegments', 'curveSegments', 'steps',
+  ]
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
@@ -197,19 +235,10 @@ function createMaterial (geometry) {
     lambert,basic
   ])
 }
-// 轉換為數字
-const roundValue = {
-  width: 1,
-  height: 1,
-  depth: 1,
-  widthSegments: 1,
-  heightSegments: 1,
-  depthSegments: 1,
-  radialSegments: 1,
-  tubularSegments: 1,
-  detail: 1,
-}
+
 const isPolyhedron = item => item.type === 'PolyhedronGeometry'
+const isFont = item => item.type === 'TextGeometry';
+
 function removeAndCreate (item, val, camera, mesh, scene, controls) {
   console.log('removeAndCreate controls', controls)
   // 原始旋轉角度
@@ -227,9 +256,11 @@ function removeAndCreate (item, val, camera, mesh, scene, controls) {
   if (isPolyhedron(item)) {
     arg.unshift(vertices, indices);
   }
-  // 
-  mesh.pointer = createMaterial(new THREE[item.type](...arg))
-  console.log('mesh.pointer',mesh.pointer)
+  if (isFont(item)) {
+    mesh.pointer = createMaterial(new THREE[item.type]('hi', Object.assign(textOptions, controls)))
+  } else { 
+    mesh.pointer = createMaterial(new THREE[item.type](...arg))
+  }
   // 繼承原始旋轉角度
   mesh.pointer.rotation.set(x,y,z)
   //
@@ -238,7 +269,7 @@ function removeAndCreate (item, val, camera, mesh, scene, controls) {
 function getMeshValue (extend, name) {
   return {
     extends: extend,
-    getValue: (item, camera, mesh) => mesh.children[0].geometry.parameters[name],
+    getValue: (item, camera, mesh) => isFont(item) && textOptions[name] !== undefined ? textOptions[name] : mmesh.children[0].geometry.parameters[name],
     setValue: (...arg) => removeAndCreate(...arg),
   }
 }

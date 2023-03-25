@@ -14,6 +14,7 @@
   <script src="./lib/three/three.js"></script>
   <script src="./lib/three/dat.gui.js"></script>
   <script src="./controls/index.js"></script>
+  <script src="./assets/font/font.js"></script>
 </head>
 <body>
   
@@ -35,6 +36,7 @@
   TorusGeometry(radius : Float, tube : Float, radialSegments : Integer, tubularSegments : Integer, arc : Float)
   TorusKnotGeometry(radius : Float, tube : Float, tubularSegments : Integer, radialSegments : Integer, p : Integer, q : Integer)
   PolyhedronGeometry(vertices : Array, indices : Array, radius : Float, detail : Integer)
+  TextGeometry(text : String, parameters : Object)
   */
   // const geometry = new THREE.PlaneBufferGeometry(10, 10, 2, 2)
   // const geometry = new THREE.CircleGeometry(4, 10, 0, Math.PI * 2)
@@ -58,8 +60,9 @@
   // 正八面體
   // const geometry = new THREE.OctahedronGeometry(4, 0);
   // 正二十面體
-  const geometry = new THREE.IcosahedronGeometry(4, 0);
-  
+  // const geometry = new THREE.IcosahedronGeometry(4, 0);
+  // 文字 (壹定要有字體文件)
+  const geometry = new THREE.TextGeometry('hi', textOptions);
   // 聯合材質
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
   const basic = new THREE.MeshBasicMaterial({wireframe: true})
