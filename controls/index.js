@@ -135,9 +135,12 @@ const basicType = {
   height: getMeshValue([0, 20], 'height'),
   widthSegments: getMeshValue([0, 20], 'widthSegments'),
   heightSegments: getMeshValue([0, 20], 'heightSegments'),
+  radius: getMeshValue([0, 20], 'radius'),
+  segments: getMeshValue([3, 80], 'segments'),
+  thetaStart: getMeshValue([0, Math.PI * 2], 'thetaStart'),
+  thetaLength: getMeshValue([0, Math.PI * 2], 'thetaLength'),
 }
 const itemType = {
-  extends: [0, 20],
   SpotLight: ['color', 'intensity', 'distance', 'angle', 'exponent'],
   AmbientLight: ['color'],
   PointLight: ['color', 'intensity', 'distance'],
@@ -151,6 +154,7 @@ const itemType = {
   ShaderMaterial: ['alpha', 'red'],
   LineDashedMaterial: ['color', 'dashSize', 'gapSize'],
   PlaneBufferGeometry: ['width', 'height', 'heightSegments', 'widthSegments'],
+  CircleGeometry : ['radius', 'segments', 'thetaStart', 'thetaLength'],
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
