@@ -143,6 +143,10 @@ const basicType = {
   thetaLength: getMeshValue([0, Math.PI * 2], 'thetaLength'),
   phiStart: getMeshValue([0, Math.PI * 2], 'phiStart'),
   phiLength: getMeshValue([0, Math.PI * 2], 'phiLength'),
+  radiusTop: getMeshValue([-20, 20], 'radiusTop'),
+  radiusBottom: getMeshValue([-20, 20], 'radiusBottom'),
+  radialSegments: getMeshValue([1, 60], 'radialSegments'),
+  openEnded: getMeshValue([], 'openEnded'),
 
 }
 const itemType = {
@@ -163,6 +167,7 @@ const itemType = {
   ShapeGeometry: [],
   BoxGeometry: ['width', 'height', 'depth', 'widthSegments', 'heightSegments', 'depthSegments'],
   SphereGeometry: ['radius', 'widthSegments', 'heightSegments', 'phiStart', 'phiLength', 'thetaStart', 'thetaLength'],
+  CylinderGeometry: ['radiusTop','radiusBottom', 'radialSegments', 'height', 'heightSegments', 'openEnded'],
 }
 function createMaterial (geometry) {
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
@@ -179,7 +184,8 @@ const roundValue = {
   depth: 1,
   widthSegments: 1,
   heightSegments: 1,
-  depthSegments: 1
+  depthSegments: 1,
+  radialSegments: 1,
 }
 function removeAndCreate (item, val, camera, mesh, scene, controls) {
   console.log('removeAndCreate controls', controls)

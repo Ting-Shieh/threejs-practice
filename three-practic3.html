@@ -31,6 +31,7 @@
   CircleGeometry(radius : Float, segments : Integer, thetaStart : Float, thetaLength : Float)
   BoxGeometry(width : Float, height : Float, depth : Float, widthSegments : Integer, heightSegments : Integer, depthSegments : Integer)
   SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer, phiStart : Float, phiLength : Float, thetaStart : Float, thetaLength : Float)
+  CylinderGeometry(radiusTop : Float, radiusBottom : Float, height : Float, radialSegments : Integer, heightSegments : Integer, openEnded : Boolean, thetaStart : Float, thetaLength : Float)
   */
   // const geometry = new THREE.PlaneBufferGeometry(10, 10, 2, 2)
   // const geometry = new THREE.CircleGeometry(4, 10, 0, Math.PI * 2)
@@ -43,8 +44,8 @@
   // shape.lineTo(0, 0)
   // const geometry = new THREE.ShapeGeometry(shape)
   // const geometry = new THREE.BoxGeometry(3, 3, 3, 1, 1, 1)
-  const geometry = new THREE.SphereGeometry(2, 20, 20, Math.PI * 2, Math.PI * 2, Math.PI * 2, Math.PI * 2)
-
+  // const geometry = new THREE.SphereGeometry(2, 20, 20, Math.PI * 2, Math.PI * 2, Math.PI * 2, Math.PI * 2)
+  const geometry = new THREE.CylinderGeometry(2, 2, 2, 20, 4, false)
   // 聯合材質
   const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
   const basic = new THREE.MeshBasicMaterial({wireframe: true})
