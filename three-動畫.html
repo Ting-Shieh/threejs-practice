@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>動畫效果</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="./lib/three/three.js"></script>
+  <script src="./lib/three/tween.min.js"></script>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000)
+  camera.position.set(0,0, 20)
+  const renderer = new THREE.WebGLRenderer()
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  document.body.appendChild(renderer.domElement)
+  // ===== 內容 ======
+  const geometry = new THREE.BoxGeometry(3, 3, 3)
+  // 聯合材質
+  const lambert = new THREE.MeshLambertMaterial({color: 0xff0000})
+  const basic = new THREE.MeshBasicMaterial({wireframe: true})
+  const mesh = {
+    pointer: THREE.SceneUtils.createMultiMaterialObject(geometry, [
+      lambert,basic
+    ])
+  }
+  
+  
+  scene.add(mesh.pointer)
+  
+  // 燈光
+  const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
+  spotLight.position.set(-10,10,90)
+  scene.add(spotLight) // spotLight | ambientLight
+  
+  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+  scene.add(spotLightHelper)
+
+  // Create a tween for rotation first
+  const tween = new TWEEN.Tween(mesh.pointer.rotation)
+
+  // Then tell the tween we want to animate the x property over 1000 milliseconds
+  tween.to({
+    x: mesh.pointer.rotation.x + 2,
+    y: mesh.pointer.rotation.y + 2,
+    z: mesh.pointer.rotation.z + 2,
+  }, 1000)
+  // And set it to start
+  tween.start()
+   // repeats forever
+  tween.repeat(Infinity)
+  const animation = () => {
+    // mesh.pointer.rotation.x += 0.01
+    // mesh.pointer.rotation.y += 0.01
+    TWEEN.update()
+    // 渲染
+    renderer.render(scene, camera)
+    requestAnimationFrame(animation)
+  }
+  animation()
+</script>
