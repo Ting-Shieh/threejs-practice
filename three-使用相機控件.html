@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>加載外部文件</title>
+  <title>使用相機控件</title>
   <style>
     *{
       margin: 0;
@@ -15,9 +15,18 @@
   <script src="../lib/three/OBJLoader.js"></script>
   <script src="../lib/three/MTLLoader.js"></script>
   <script src="../lib/three/OBJMTLLoader.js"></script>
+  <!-- 軌跡球控件 -->
+  <script src="../lib/three/TrackballControls.js"></script>
+  <!-- 第一人稱控件 -->
+  <script src="../lib/three/FirstPersonControls.js"></script>
+  <!-- 飛行控件 -->
+  <script src="../lib/three/FlyControls.js"></script>
+  <!-- 翻滾控件 -->
+  <script src="../lib/three/RollControls.js"></script>
+  <!-- 軌道控件 -->
+  <script src="../lib/three/OrbitControls.js"></script>
 </head>
 <body>
-  
 </body>
 </html>
 <script>
@@ -26,7 +35,7 @@
   // 創建相機
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000)
   // 設置相機位置
-  camera.position.set(0, 300, 400)
+  camera.position.set(100, 30, 0) // set(0, 300, 400)
   // 相機聚焦
   camera.lookAt(new THREE.Vector3(0,0,0))
   // 創建渲染器
@@ -34,7 +43,21 @@
   // 設置渲染器尺寸
   renderer.setSize(window.innerWidth, window.innerHeight)
   document.body.appendChild(renderer.domElement)
-  // ===== 內容 ======
+  // ==========
+  const clock = new THREE.Clock()
+  // // 使用軌跡球控件接手相機視角
+  // const trackBall = new THREE.TrackballControls(camera)
+  // // 第一人稱
+  // const controls = new THREE.FirstPersonControls(camera)
+  // controls.lookSpeed = 0.02
+  // // 飛行控件
+  // const controls = new THREE.FlyControls(camera)
+  // controls.rollSpeed = 0.5
+  // // 翻滾控件
+  // const controls = new THREE.RollControls(camera)
+  // 軌道控件
+  const controls = new THREE.OrbitControls(camera)
+
   // 燈光
   const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
   spotLight.position.set(2000, 8000, 4000)
@@ -48,8 +71,10 @@
   loader.load('./assets/models/city.obj', './assets/models/city.mtl', (mesh) => {
     scene.add(mesh)
   })
-
   const animation = () => {
+    // 控件更新
+    // trackBall.updat()
+    controls.update(clock.getDelta())
     // 渲染
     renderer.render(scene, camera)
     requestAnimationFrame(animation)
