@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>加載外部文件</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script src="./lib/three/three.js"></script>
+  <script src="../lib/three/OBJLoader.js"></script>
+  <script src="../lib/three/MTLLoader.js"></script>
+  <script src="../lib/three/OBJMTLLoader.js"></script>
+</head>
+<body>
+  
+</body>
+</html>
+<script>
+  // 創建場景
+  const scene = new THREE.Scene();
+  // 創建相機
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000)
+  // 設置相機位置
+  camera.position.set(0, 300, 400)
+  camera.lookAt(new THREE.Vector3(0,0,0))
+  // 創建渲染器
+  const renderer = new THREE.WebGLRenderer()
+  // 設置渲染器尺寸
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  document.body.appendChild(renderer.domElement)
+  // ===== 內容 ======
+  // 燈光
+  const spotLight = new THREE.SpotLight(0xffffff) // 聚光燈光源
+  spotLight.position.set(2000, 8000, 4000)
+  scene.add(spotLight)
+  
+  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+  scene.add(spotLightHelper)
+  
+  // 加載文件
+  const loader = new THREE.OBJMTLLoader()
+  loader.load('./assets/models/city.obj', './assets/models/city.mtl', (mesh) => {
+    scene.add(mesh)
+  })
+  const animation = () => {
+    // 渲染
+    renderer.render(scene, camera)
+    requestAnimationFrame(animation)
+  }
+  animation()
+</script>
