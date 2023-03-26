@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>凹凸貼圖</title>
+  <title>法向貼圖</title>
   <script src="../lib/three/three.js"></script>
   <style>
     *{
@@ -23,7 +23,7 @@
   // 创建一个相机 视点
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
   // 设置相机的位置
-  camera.position.set(0, 0, 20);
+  camera.position.set(0, 0, 40);
 
   // 创建一个渲染器
   const renderer = new THREE.WebGLRenderer();
@@ -38,42 +38,30 @@
   scene.add(spotLight);
 
   // 創建立方體對象
-  const geometry = new THREE.PlaneBufferGeometry(10, 10, 2, 2)
-
-  // 創建紋理加載器
-  const loader = new THREE.TextureLoader()
-  loader.load('./assets/wall.jpg', (texture) => {
-    // 創建材質
-    const phong = new THREE.MeshPhongMaterial({
-      map :texture
-    })
-    // 結合對象與材質
-    const mesh = new THREE.Mesh(geometry, phong)
-    
-    mesh.rotation.y = -0.1
-    mesh.position.x = -4
-    // 添加到場景
-    scene.add(mesh)
+  const geometry = new THREE.BoxGeometry(10, 10, 10)
+  // 創建材質
+  const phong = new THREE.MeshPhongMaterial({
+    // 針對紋理的加載
+    map: THREE.ImageUtils.loadTexture('./assets/plaster.jpg'),
   })
 
-  renderer.setClearColor(0xffffff)
-  loader.load('./assets/wall.jpg', (texture) => {
-    // 凹凸貼圖
-    loader.load('./assets/wall-bump.jpg', (bump) => {
-        // 創建材質
-        const phong2 = new THREE.MeshPhongMaterial({
-          map :texture,
-          bumpMap: bump,
-          bumpScale: 0.2
-        })
-        // 結合對象與材質
-        const mesh2 = new THREE.Mesh(geometry, phong2)
-        mesh2.rotation.y = -0.5
-        mesh2.position.x = 4
-        // 添加到場景
-        scene.add(mesh2)
-    })
+  const mesh = new THREE.Mesh(geometry, phong);
+  mesh.rotation.y = 0.5;
+  mesh.position.x = -12;
+
+  // 添加到场景里
+  scene.add(mesh);
+  // 創建材質
+  const phong2 = new THREE.MeshPhongMaterial({
+    map: THREE.ImageUtils.loadTexture('./assets/plaster.jpg'),
+    normalMap: THREE.ImageUtils.loadTexture('./assets/plaster-normal.jpg')
   })
+  const mesh2 = new THREE.Mesh(geometry, phong2);
+  mesh2.rotation.y = -0.5;
+  mesh2.position.x = 12;
+
+  // 添加到场景里
+  scene.add(mesh2);
   const animation = () => {
     // 渲染
     renderer.render(scene, camera);
