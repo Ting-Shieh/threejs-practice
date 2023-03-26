@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>法向貼圖</title>
+  <title>canvas貼圖</title>
   <script src="../lib/three/three.js"></script>
   <style>
     *{
@@ -31,38 +31,48 @@
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   document.body.appendChild(renderer.domElement)
-
+  renderer.setClearColor(0xffffff)
   // 添加灯光
   const spotLight = new THREE.SpotLight(0xffffff);
-  spotLight.position.set(-10, 10, 90);
+  spotLight.position.set(2000,8000,4000);
   scene.add(spotLight);
 
   // 創建立方體對象
-  const geometry = new THREE.BoxGeometry(10, 10, 10)
+  const cubeGeometry = new THREE.BoxGeometry(5, 5, 5)
   // 創建材質
-  const phong = new THREE.MeshPhongMaterial({
-    // 針對紋理的加載 ＝> 同步
-    map: THREE.ImageUtils.loadTexture('./assets/plaster.jpg'),
-  })
+  function getSprite() {
+    // 創建canvas標籤
+    const canvas = document.createElement('canvas')
+    
+    // 設置canvas寬高
+    canvas.width = 160;
+    canvas.height = 160
+    
+    // 獲取canvas上下文
+    const ctx = canvas.getContext('2d')
 
-  const mesh = new THREE.Mesh(geometry, phong);
-  mesh.rotation.y = 0.5;
-  mesh.position.x = -12;
+    // 繪製圖形
+    ctx.fillStyle = 'red';
+    ctx.arc(80, 80, 32, 0, Math.PI * 2);
+    ctx.fill(); // 填充
+
+    // 創建紋理對象
+    const texture = new THREE.Texture(canvas)
+    // 刷新當前基礎材質紋理
+    texture.needsUpdate = true;
+    return texture;
+  }
+  const cubeMaterial = new THREE.MeshBasicMaterial({map: getSprite()})
+
+  const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  cube.position.x = -5;
 
   // 添加到场景里
-  scene.add(mesh);
-  // 創建材質
-  const phong2 = new THREE.MeshPhongMaterial({
-    map: THREE.ImageUtils.loadTexture('./assets/plaster.jpg'),
-    normalMap: THREE.ImageUtils.loadTexture('./assets/plaster-normal.jpg')
-  })
-  const mesh2 = new THREE.Mesh(geometry, phong2);
-  mesh2.rotation.y = -0.5;
-  mesh2.position.x = 12;
-
-  // 添加到场景里
-  scene.add(mesh2);
+  scene.add(cube);
+  
   const animation = () => {
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
     // 渲染
     renderer.render(scene, camera);
     requestAnimationFrame(animation);
