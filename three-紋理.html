@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>紋理</title>
+  <script src="../lib/three/three.js"></script>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+</body>
+</html>
+<script>
+  // 创建一个场景
+  const scene = new THREE.Scene();
+
+  // 创建一个相机 视点
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+  // 设置相机的位置
+  camera.position.set(0, 0, 20);
+
+  // 创建一个渲染器
+  const renderer = new THREE.WebGLRenderer();
+  // 设置渲染器尺寸
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  document.body.appendChild(renderer.domElement)
+
+  // 添加灯光
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(-10, 10, 90);
+  scene.add(spotLight);
+
+  // 創建立方體對象
+  const geometry = new THREE.PlaneBufferGeometry(10, 10, 2, 2)
+
+  // 創建紋理加載器
+  const loader = new THREE.TextureLoader()
+  loader.load('./assets/grass.png', (texture) => {
+    // 創建材質
+    const lambert = new THREE.MeshLambertMaterial({
+      map :texture
+    })
+    // 結合對象與材質
+    const mesh = new THREE.Mesh(geometry, lambert)
+    // 添加到場景
+    scene.add(mesh)
+  })
+
+  let step = 0.1
+  const animation = () => {
+    // 渲染
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+  }
+  animation()
+</script>
