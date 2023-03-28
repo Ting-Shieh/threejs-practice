@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>輝光效果</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+</body>
+</html>
+<script type="module">
+  import * as THREE from 'https://cdn.skypack.dev/three@v0.129.0';
+  import { OrbitControls } from 'https://cdn.skypack.dev/three@v0.129.0/examples/jsm/controls/OrbitControls.js'
+  import { EffectComposer } from 'https://cdn.skypack.dev/three@v0.129.0/examples/jsm/postprocessing/EffectComposer.js'
+  import { RenderPass } from 'https://cdn.skypack.dev/three@v0.129.0/examples/jsm/postprocessing/RenderPass.js'
+  import { OutlinePass } from 'https://cdn.skypack.dev/three@v0.129.0/examples/jsm/postprocessing/OutlinePass.js'
+
+  const clock = new THREE.Clock()
+  // 創建一個場景
+  const scene = new THREE.Scene();
+
+  // 創建一個相機 視點
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+  // 设置相機的位置
+  camera.position.set(100,100,0);
+  camera.lookAt(new THREE.Vector3(0,0,0));
+
+
+  // 創建一個渲染器
+  const renderer = new THREE.WebGLRenderer();
+  // 設置渲染器尺寸
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const controls = new OrbitControls(camera, renderer.domElement)
+  document.body.appendChild(renderer.domElement)
+
+  // 添加燈光
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(2000,8000,4000);
+  scene.add(spotLight);
+
+  const g1 = new THREE.BoxGeometry(18,18,18);
+  const g2 = new THREE.BoxGeometry(18,18,18);
+  const m1 = new THREE.MeshBasicMaterial({
+    color: 0x00ff00
+  })
+  const m2 = new THREE.MeshBasicMaterial({
+    color: 0xff0000
+  })
+
+  const c1 = new THREE.Mesh(g1, m1)
+  const c2 = new THREE.Mesh(g2, m2)
+  c1.position.y = 20;
+  c2.position.y = -20;
+
+  scene.add(c1)
+  scene.add(c2)
+  
+  // 光輝效果
+  // 創建一個渲染通道，該通道會渲染場景，不會渲染到屏幕上
+  const renderScene = new RenderPass(scene, camera)
+
+  // 分辨率 場景 相機 當前選中的物體加上光輝效果
+  const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera, [c1])
+  outlinePass.renderToScreen = true // 渲染到螢幕上
+  outlinePass.edgeStrength = 3; // 尺寸
+  outlinePass.edgeGlow = 2; // 發光的强度
+  outlinePass.edgeThickness = 2; // 光暈粗細
+  outlinePass.pulsePeriod = 1;// 閃爍的速度
+  outlinePass.visibleEdgeColor.set('yellow');
+
+  // 創建一個組合器對象，添加處通道
+  const bloom = new EffectComposer(renderer)
+  bloom.setSize(window.innerWidth, window.innerHeight)
+  bloom.addPass(renderScene)
+  bloom.addPass(outlinePass)
+
+  const animation = () => {
+    // 渲染
+    renderer.render(scene, camera);
+    // 組合器對象渲染
+    bloom.render()
+    requestAnimationFrame(animation);
+  }
+  animation()
+</script>
