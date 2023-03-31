@@ -36,7 +36,39 @@
   const spotLight = new THREE.SpotLight(0xffffff);
   spotLight.position.set(2000,8000,4000);
   scene.add(spotLight);
+  // 創建一個基礎粒子
+  function createNormalSprite() {
+    for (let i = -5; i < 5; i++) {
+      for (let j = -5; j < 5; j++) {
+        const material = new THREE.SpriteMaterial({
+          color: Math.random() * 0xffffff
+        })
+        const sprite = new THREE.Sprite(material);
+        sprite.position.set(i * 10, j * 10, 0);
+        sprite.scale.set(2,2,2);
+        scene.add(sprite);
+      }
+    }
+  }
+  // 粒子系統來創建粒子
+  function createSystemSprite() {
+    const geometry = new THREE.Geometry();
+    const material = new THREE.PointCloudMaterial({
+      size: 4,
+      vertexColors: true,
+    })
 
+    for (let i = -5; i < 5; i++) {
+      for (let j = -5; j < 5; j++) {
+        geometry.vertices.push(new THREE.Vector3(i * 10, j * 10, 0))
+        geometry.colors.push(new THREE.Color(Math.random() * 0xffffff))
+      }
+    }
+
+    scene.add(new THREE.PointCloud(geometry, material))
+  }
+  // createNormalSprite()
+  createSystemSprite()
   const animation = () => {
     // 渲染
     renderer.render(scene, camera);
