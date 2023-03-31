@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>水波效果</title>
+  <script src="../lib/three/three.js"></script>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+</body>
+</html>
+<script>
+  // 创建一个场景
+  const scene = new THREE.Scene();
+
+  // 创建一个相机 视点
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+  // 设置相机的位置
+  camera.position.set(0, 50, 200);
+  camera.lookAt(new THREE.Vector3(0,0,0)) // new THREE.Vector3(0,0,0)
+
+  // 创建一个渲染器
+  const renderer = new THREE.WebGLRenderer();
+  // 设置渲染器尺寸
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  document.body.appendChild(renderer.domElement)
+  // renderer.setClearColor(0xffffff)
+  // 添加灯光
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(2000,8000,4000);
+  scene.add(spotLight);
+  // 
+  const total = 20
+  const spriteList = []
+  const speed = 0.1 // 變化的速度
+  const height = 5 // 波浪的高度
+  const step = 0.3 // 波浪的幅度
+
+  // 使用canvas貼圖實現圖形
+  function getSprite() {
+    const canvas = document.createElement('canvas')
+    const size = 8
+    canvas.width = size * 2
+    canvas.height = size * 2
+
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#00ff00'
+    ctx.arc(size, size, size / 1.5, 0, Math.PI * 2)
+    ctx.fill()
+
+    const texture = new THREE.Texture(canvas)
+    texture.needsUpdate = true
+    return texture
+  }
+
+  // 創建一個基礎粒子
+  function createNormalSprite() {
+    // 一顆粒子 Material
+    const material = new THREE.SpriteMaterial({
+      color: 0x00ffff,
+      map: getSprite()
+    })
+    for (let i = -total; i < total; i++) {
+      for (let j = -total; j < total; j++) {
+        // 物體
+        const sprite = new THREE.Sprite(material);
+        sprite.position.set(i * 10, 0, j * 10);
+        spriteList.push(sprite);
+        scene.add(sprite);
+      }
+    }
+  }
+  createNormalSprite()
+
+  let status = 0
+  const animation = () => {
+    // 渲染
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+
+    let index = -1
+    for (let x = 0; x < total * 2; x++) {
+        for (let y = 0; y < total * 2; y++) {
+        index++
+        spriteList[index].position.y = (Math.sin(x + status) * step) * height + (Math.sin(y + status) * step) * height
+
+        // 縮放係數
+        const scaleVale = (Math.sin(x + status) * step) + 1
+        spriteList[index].scale.set(scaleVale, scaleVale, scaleVale)
+      }
+    }
+
+    status += speed
+  }
+  animation()
+</script>
